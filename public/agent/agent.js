@@ -2,8 +2,10 @@
  * 客服工作台 JS
  */
 (function() {
-    const API_BASE = 'http://127.0.0.1:9501';
-    const WS_URL = 'ws://127.0.0.1:9502';
+    // const API_BASE = 'http://127.0.0.1:9501';
+    const API_BASE = 'http://54.151.35.185';
+    // const WS_URL = 'ws://127.0.0.1:9502';
+    const WS_URL = 'ws://54.151.35.185:80';
 
     const state = {
         token: localStorage.getItem('agent_token') || '',
