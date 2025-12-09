@@ -9,7 +9,8 @@
 
     // 默认配置
     const defaultConfig = {
-        server: '',
+        server: '',              // WebSocket 地址，如: ws://example.com/ws
+        apiServer: '',           // HTTP API 地址，如: http://example.com（可选，不填则从 server 推导）
         position: 'right',       // 'right' | 'left'
         theme: '#1890ff',
         title: 'Customer Service',
@@ -76,11 +77,26 @@
         },
 
         /**
+         * 获取 HTTP API 服务器地址
+         */
+        getApiServer() {
+            // 如果配置了 apiServer，直接使用
+            if (this.config.apiServer) {
+                return this.config.apiServer;
+            }
+            // 否则从 WebSocket 地址推导：ws://host/ws -> http://host
+            return this.config.server
+                .replace('ws://', 'http://')
+                .replace('wss://', 'https://')
+                .replace(/\/ws\/?$/, '');  // 移除末尾的 /ws
+        },
+
+        /**
          * 从服务器加载文案配置
          */
         async loadTextsConfig() {
             try {
-                const httpServer = this.config.server.replace('ws://', 'http://').replace('wss://', 'https://').replace(/:\d+$/, ':9501');
+                const httpServer = this.getApiServer();
                 const res = await fetch(`${httpServer}/config/sdk-texts`);
                 const data = await res.json();
                 if (data.code === 0 && data.data) {
@@ -512,7 +528,7 @@
          * 初始化客户信息（发送来源页面、设备信息等）
          */
         initCustomer() {
-            const httpServer = this.config.server.replace('ws://', 'http://').replace('wss://', 'https://').replace(/:\d+$/, ':9501');
+            const httpServer = this.getApiServer();
 
             // 自动获取客户时区
             let timezone = '';
@@ -803,7 +819,7 @@
         },
 
         fetchHistory() {
-            const httpServer = this.config.server.replace('ws://', 'http://').replace('wss://', 'https://').replace(/:\d+$/, ':9501');
+            const httpServer = this.getApiServer();
             fetch(`${httpServer}/customer/history?uuid=${this.state.customerUuid}`)
                 .then(r => r.json())
                 .then(res => {
