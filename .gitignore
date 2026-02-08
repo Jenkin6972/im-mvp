@@ -1,4 +1,4 @@
-.idea/*
+.idea/
 .env
-runtime/*
+runtime/
 .env.prod
