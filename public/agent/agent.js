@@ -3,9 +3,11 @@
  */
 (function() {
     // const API_BASE = 'http://127.0.0.1:9501';
-    const API_BASE = 'http://54.151.35.185';
+    // const API_BASE = 'http://54.151.35.185';
     // const WS_URL = 'ws://127.0.0.1:9502';
-    const WS_URL = 'ws://54.151.35.185/ws';
+    // const WS_URL = 'ws://54.151.35.185/ws';
+    const API_BASE = window.location.origin;
+    const WS_URL = window.location.origin.replace('https', 'wss').replace('http', 'ws') + '/ws';
 
     const state = {
         token: localStorage.getItem('agent_token') || '',
