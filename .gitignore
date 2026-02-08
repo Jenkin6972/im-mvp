@@ -2,4 +2,3 @@
 .env
 runtime/*
 .env.prod
-config/autoload/oss.php
