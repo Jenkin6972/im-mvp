@@ -110,8 +110,12 @@ class MessageService
             });
         }
 
-        // 反转顺序，让旧消息在前面
-        return $query->get()->reverse()->values()->toArray();
+        // 反转顺序，让旧消息在前面，并格式化时间为 ISO 格式
+        return $query->get()->reverse()->values()->map(function ($msg) {
+            $arr = $msg->toArray();
+            $arr['created_at'] = $msg->created_at->toIso8601String();
+            return $arr;
+        })->toArray();
     }
 
     /**

@@ -88,6 +88,22 @@ Router::get('/dingding.mp3', function (): ResponseInterface {
         ->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(file_get_contents($file)));
 });
 
+// 图片上传按钮
+Router::get('/upload.png', function (): ResponseInterface {
+    $file = BASE_PATH . '/public/upload.png';
+    $response = \Hyperf\Context\Context::get(ResponseInterface::class);
+    return $response->withHeader('Content-Type', 'image/png')
+        ->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(file_get_contents($file)));
+});
+
+// 客服头像
+Router::get('/avatar.jpg', function (): ResponseInterface {
+    $file = BASE_PATH . '/public/avatar.jpg';
+    $response = \Hyperf\Context\Context::get(ResponseInterface::class);
+    return $response->withHeader('Content-Type', 'image/jpeg')
+        ->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(file_get_contents($file)));
+});
+
 // ==================== 认证路由（无需Token） ====================
 
 Router::post('/auth/login', [App\Controller\Http\AuthController::class, 'login']);
@@ -129,9 +145,18 @@ Router::addGroup('/message', function () {
 // ==================== 客户路由（无需认证，SDK使用） ====================
 
 Router::addGroup('/customer', function () {
-    Router::post('/init', [App\Controller\Http\CustomerController::class, 'init']);      // 客户初始化
-    Router::get('/history', [App\Controller\Http\CustomerController::class, 'history']); // 历史消息
+    Router::post('/init', [App\Controller\Http\CustomerController::class, 'init']);           // 客户初始化
+    Router::get('/history', [App\Controller\Http\CustomerController::class, 'history']);      // 历史消息
+    Router::post('/save-welcome', [App\Controller\Http\CustomerController::class, 'saveWelcome']); // 保存欢迎语
 });
+
+// ==================== 上传路由 ====================
+
+// 客户上传（无需认证）
+Router::post('/upload/image', [App\Controller\Http\UploadController::class, 'image']);
+
+// 客服上传（需要认证）
+Router::post('/agent/upload/image', [App\Controller\Http\UploadController::class, 'image'], ['middleware' => [App\Middleware\AuthMiddleware::class]]);
 
 // 客户相关（需要认证，客服使用）
 Router::put('/customer/{id:\d+}', [App\Controller\Http\CustomerController::class, 'update'], ['middleware' => [App\Middleware\AuthMiddleware::class]]);

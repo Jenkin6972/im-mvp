@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Enums\ContentType;
 use App\Enums\ConversationStatus;
 use App\Enums\SenderType;
 use App\Model\Agent;
@@ -135,7 +136,7 @@ class WebSocketService
                                 'id' => $msg->id,
                                 'sender_type' => $msg->sender_type,
                                 'content' => $msg->content,
-                                'created_at' => $msg->created_at,
+                                'created_at' => $msg->created_at->toIso8601String(),
                             ];
                         })->toArray(),
                     ],
@@ -286,12 +287,19 @@ class WebSocketService
         $conversation = $this->conversationService->getOrCreateForCustomer($customer);
         $isNewConversation = $conversation->wasRecentlyCreated;
 
+        // 获取消息内容和类型
+        $content = $data['content'] ?? '';
+        $contentType = isset($data['content_type']) && $data['content_type'] == ContentType::IMAGE
+            ? ContentType::IMAGE()
+            : ContentType::TEXT();
+
         // 保存消息到数据库
         $message = $this->messageService->create(
             $conversation->id,
             SenderType::CUSTOMER(),
             $customer->id,
-            $data['content'] ?? ''
+            $content,
+            $contentType
         );
 
         // 构建消息数据（用于推送）
@@ -304,7 +312,7 @@ class WebSocketService
                 'sender_id' => $customer->id,
                 'content' => $message->content,
                 'content_type' => $message->content_type,
-                'created_at' => $message->created_at,
+                'created_at' => $message->created_at->toIso8601String(),
             ],
         ];
 
@@ -375,12 +383,18 @@ class WebSocketService
             return;
         }
 
+        // 获取消息类型
+        $contentType = isset($data['content_type']) && $data['content_type'] == ContentType::IMAGE
+            ? ContentType::IMAGE()
+            : ContentType::TEXT();
+
         // 保存消息到数据库
         $message = $this->messageService->create(
             $conversationId,
             SenderType::AGENT(),
             $agentId,
-            $content
+            $content,
+            $contentType
         );
 
         // 构建消息数据
@@ -393,7 +407,7 @@ class WebSocketService
                 'sender_id' => $agentId,
                 'content' => $message->content,
                 'content_type' => $message->content_type,
-                'created_at' => $message->created_at,
+                'created_at' => $message->created_at->toIso8601String(),
             ],
         ];
 

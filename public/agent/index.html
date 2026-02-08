@@ -61,11 +61,14 @@
         .msg-time { font-size: 11px; color: #999; margin-top: 4px; }
         .msg-wrapper-right .msg-time { text-align: right; }
         .msg-system { text-align: center; color: #999; font-size: 13px; margin: 16px 0; }
-        .chat-input-area { background: white; padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; gap: 12px; }
+        .chat-input-area { background: white; padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; gap: 12px; align-items: center; }
         .chat-input { flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: none; }
         .chat-input:focus { border-color: #1890ff; outline: none; }
         .send-btn { background: #1890ff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; }
         .send-btn:disabled { background: #ccc; }
+        .image-btn { background: none; border: none; cursor: pointer; padding: 8px; display: flex; align-items: center; justify-content: center; }
+        .image-btn img { width: 20px; height: 20px; opacity: 0.6; transition: opacity 0.2s; }
+        .image-btn:hover img { opacity: 1; }
 
         .empty-chat { display: flex; align-items: center; justify-content: center; height: 100%; color: #999; }
 
@@ -218,6 +221,22 @@
         .action-btn.delete { background: #fff1f0; color: #ff4d4f; }
         .action-btn.delete:hover { background: #ffccc7; }
 
+        /* 快捷回复管理页面样式 */
+        .quick-mgmt-container { padding: 24px; overflow-y: auto; height: calc(100vh - 56px); }
+        .quick-mgmt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .quick-mgmt-header h2 { margin: 0; font-size: 20px; }
+        .add-quick-btn { background: #1890ff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .add-quick-btn:hover { background: #40a9ff; }
+        .quick-table-container { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .quick-table { width: 100%; border-collapse: collapse; }
+        .quick-table th, .quick-table td { padding: 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        .quick-table th { background: #fafafa; font-weight: 500; color: #666; }
+        .quick-table tr:hover { background: #f5f5f5; }
+        .quick-content { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .quick-status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+        .quick-status.active { background: #f6ffed; color: #52c41a; }
+        .quick-status.inactive { background: #f5f5f5; color: #999; }
+
         /* 右侧客户信息面板 */
         .customer-panel { width: 280px; background: white; border-left: 1px solid #e8e8e8; display: flex; flex-direction: column; }
         .customer-panel-header { padding: 16px; border-bottom: 1px solid #e8e8e8; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
@@ -301,6 +320,7 @@
                     <div class="admin-dropdown-menu">
                         <div class="admin-dropdown-item" id="statsMenuItem">📊 统计报表</div>
                         <div class="admin-dropdown-item" id="agentMgmtMenuItem">👥 客服管理</div>
+                        <div class="admin-dropdown-item" id="quickReplyMgmtMenuItem">⚡ 快捷回复</div>
                         <div class="admin-dropdown-item" id="textConfigMenuItem">🌐 文案配置</div>
                     </div>
                 </div>
@@ -349,6 +369,8 @@
         <div class="stats-container" id="statsContainer" style="display:none;"></div>
         <!-- 客服管理页面 -->
         <div class="agent-mgmt-container" id="agentMgmtContainer" style="display:none;"></div>
+        <!-- 快捷回复管理页面 -->
+        <div class="quick-mgmt-container" id="quickMgmtContainer" style="display:none;"></div>
     </div>
 
     <!-- 客户信息弹窗 -->
@@ -397,6 +419,41 @@
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="submitAgentEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快捷回复编辑弹窗 -->
+    <div class="modal" id="quickReplyEditModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="quickReplyEditTitle">新增快捷回复</h3>
+                <button class="modal-close" onclick="closeModal('quickReplyEditModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editQuickReplyId">
+                <div class="form-group">
+                    <label>标题 <span style="color:#ff4d4f">*</span></label>
+                    <input type="text" id="editQuickReplyTitle" placeholder="请输入标题（如：问候语）">
+                </div>
+                <div class="form-group">
+                    <label>内容 <span style="color:#ff4d4f">*</span></label>
+                    <textarea id="editQuickReplyContent" placeholder="请输入快捷回复内容" rows="4" style="width:100%;resize:vertical;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>排序（数值越小越靠前）</label>
+                    <input type="number" id="editQuickReplySortOrder" placeholder="默认0" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select class="form-select" id="editQuickReplyStatus">
+                        <option value="1">启用</option>
+                        <option value="0">禁用</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="submitQuickReplyEdit()">保存</button>
             </div>
         </div>
     </div>

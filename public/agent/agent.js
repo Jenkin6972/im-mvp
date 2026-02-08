@@ -112,6 +112,7 @@
         $('#adminDropdownBtn').onclick = toggleAdminDropdown;
         $('#statsMenuItem').onclick = () => { closeAdminDropdown(); showStatsPage(); };
         $('#agentMgmtMenuItem').onclick = () => { closeAdminDropdown(); showAgentMgmtPage(); };
+        $('#quickReplyMgmtMenuItem').onclick = () => { closeAdminDropdown(); showQuickReplyMgmtPage(); };
         $('#textConfigMenuItem').onclick = () => { closeAdminDropdown(); showTextConfigModal(); };
         // 点击其他区域关闭下拉菜单
         document.addEventListener('click', (e) => {
@@ -358,12 +359,55 @@
         if (msgDate.getTime() === today.getTime()) {
             // 今天，只显示时间
             return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-        } else if (msgDate.getTime() === today.getTime() - 86400000) {
+        }else if (msgDate.getTime() === today.getTime() - 86400000) {
             // 昨天
             return '昨天 ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
         } else {
             // 其他日期
             return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' });
+        }
+    }
+
+    // 格式化消息时间（只显示 HH:MM，兼容 ISO 格式和普通格式）
+    function formatMessageTime(timeStr) {
+        if (!timeStr) return '';
+
+        try {
+            const date = new Date(timeStr);
+            if (isNaN(date.getTime())) {
+                // 如果解析失败，尝试手动提取 HH:MM
+                const match = timeStr.match(/(\d{2}):(\d{2})/);
+                return match ? match[0] : '';
+            }
+
+            // 格式化为 HH:MM
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }catch (e) {
+            return '';
+        }
+    }
+
+    // 格式化日期（显示 YYYY-MM-DD，兼容 ISO 格式）
+    function formatDate(timeStr) {
+        if (!timeStr) return '';
+
+        try {
+            const date = new Date(timeStr);
+            if (isNaN(date.getTime())) {
+                // 如果解析失败，尝试手动提取 YYYY-MM-DD
+                const match = timeStr.match(/(\d{4}-\d{2}-\d{2})/);
+                return match ? match[0] : '';
+            }
+
+            // 格式化为 YYYY-MM-DD
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        } catch (e) {
+            return '';
         }
     }
 
@@ -619,6 +663,9 @@
 
         // 输入区域（上帝视角模式下隐藏）
         const inputArea = isReadonly ? '' : `
+            <div class="uploading-indicator" id="uploadingIndicator" style="display:none; padding:10px; background:#f9f9f9; color:#666; font-size:12px;">
+                Picture uploading...
+            </div>
             <div class="chat-input-area">
                 <div class="quick-reply-bar" id="quickReplyBar">
                     <button class="quick-reply-toggle" id="quickReplyToggle" title="快捷回复">⚡</button>
@@ -627,6 +674,8 @@
                         ${state.quickReplies.length === 0 ? '<div class="quick-reply-empty">暂无快捷回复</div>' : ''}
                     </div>
                 </div>
+                <button class="image-btn" id="imageBtn" title="发送图片"><img src="/upload.png" alt="上传图片"></button>
+                <input type="file" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,image/bmp,image/svg+xml,image/tiff,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.svg,.tiff,.tif,.ico" style="display:none;">
                 <textarea class="chat-input" id="chatInput" placeholder="输入消息..." rows="1"></textarea>
                 <button class="send-btn" id="sendBtn">发送</button>
             </div>`;
@@ -643,7 +692,9 @@
             </div>
             ${inputArea}
         `;
-        $('#chatMessages').scrollTop = $('#chatMessages').scrollHeight;
+
+        // 滚动到底部
+        scrollToBottom();
 
         // 非只读模式下绑定事件
         if (!isReadonly) {
@@ -662,6 +713,10 @@
                     chatInput.focus();
                 };
             });
+
+            // 图片上传事件
+            $('#imageBtn').onclick = () => $('#imageInput').click();
+            $('#imageInput').onchange = handleImageUpload;
         }
     }
 
@@ -698,30 +753,50 @@
         if (m.sender_type === 3) return `<div class="msg-system">${escapeHtml(m.content)}</div>`;
 
         const isAgent = m.sender_type === 2;
+        const isImage = m.content_type === 2;
         const cls = isAgent ? 'msg-right' : 'msg-left';
         const wrapperCls = isAgent ? 'msg-wrapper-right' : 'msg-wrapper-left';
         const avatarCls = isAgent ? 'msg-avatar-agent' : 'msg-avatar-customer';
         const avatarText = isAgent ? '客服' : '客户';
         const readStatus = isAgent ? getReadStatusHTML(m) : '';
 
-        // 格式化时间：只显示 HH:MM
-        let timeStr = '';
-        if (m.created_at) {
-            const timePart = m.created_at.split(' ')[1];
-            if (timePart) {
-                timeStr = timePart.substring(0, 5); // HH:MM
-            }
+        // 格式化时间：使用 formatMessageTime 兼容 ISO 格式
+        const timeStr = m.created_at ? formatMessageTime(m.created_at) : '';
+
+        // 消息内容：图片或文本
+        let contentHTML = '';
+        if (isImage) {
+            const escapedUrl = escapeHtml(m.content);
+            contentHTML = `<img src="${escapedUrl}" class="msg-image" onclick="openImageModal('${escapedUrl}')" alt="图片" style="max-width:200px; max-height:200px; border-radius:8px; cursor:pointer;">`;
+        } else {
+            contentHTML = escapeHtml(m.content);
         }
 
         return `
             <div class="msg-wrapper ${wrapperCls}">
                 <div class="msg-avatar ${avatarCls}">${avatarText}</div>
                 <div class="msg-bubble">
-                    <div class="msg ${cls}">${escapeHtml(m.content)}${readStatus}</div>
+                    <div class="msg ${cls}">${contentHTML}${readStatus}</div>
                     <div class="msg-time">${timeStr}</div>
                 </div>
             </div>`;
     }
+
+    // 打开图片预览弹窗
+    window.openImageModal = function(imageUrl) {
+        // 创建或显示图片预览弹窗
+        let modal = document.getElementById('imageModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'imageModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out;';
+            modal.innerHTML = '<img src="" style="max-width:90%;max-height:90%;object-fit:contain;">';
+            modal.onclick = () => modal.style.display = 'none';
+            document.body.appendChild(modal);
+        }
+        modal.querySelector('img').src = imageUrl;
+        modal.style.display = 'flex';
+    };
 
     // 获取消息已读状态HTML
     function getReadStatusHTML(m) {
@@ -768,9 +843,149 @@
 
         state.ws.send(JSON.stringify({
             type: 'message',
-            data: { conversation_id: state.currentConvId, content }
+            data: { conversation_id: state.currentConvId, content, content_type: 1 }
         }));
         input.value = '';
+    }
+
+    // 处理图片上传
+    async function handleImageUpload(e) {
+        let file = e.target.files[0];
+        if (!file) return;
+
+        // 验证文件类型（支持更多格式，包括 HEIC/HEIF）
+        const allowedTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'image/heic',
+            'image/heif',
+            'image/bmp',
+            'image/x-ms-bmp',
+            'image/svg+xml',
+            'image/tiff',
+            'image/x-icon',
+            'image/vnd.microsoft.icon'
+        ];
+
+        // 检查文件扩展名（作为 MIME 类型的补充）
+        const fileName = file.name.toLowerCase();
+        const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif', '.bmp', '.svg', '.tiff', '.tif', '.ico'];
+        const hasValidExt = allowedExts.some(ext => fileName.endsWith(ext));
+
+        if (!allowedTypes.includes(file.type) && !hasValidExt) {
+            alert('Only image files are supported (JPG, PNG, GIF, WEBP, HEIC, HEIF, BMP, SVG, TIFF, ICO)');
+            return;
+        }
+
+        // 验证文件大小（100MB）
+        if (file.size > 100 * 1024 * 1024) {
+            alert('Image size cannot exceed 100MB');
+            return;
+        }
+
+        // 显示上传中状态
+        const indicator = $('#uploadingIndicator');
+        if (indicator) {
+            indicator.style.display = 'block';
+            indicator.textContent = 'Uploading...';
+        }
+
+        try {
+            // 检查是否是 HEIC/HEIF 格式，需要转换
+            const isHeic = file.type === 'image/heic' || file.type === 'image/heif' ||
+                           fileName.endsWith('.heic') || fileName.endsWith('.heif');
+
+            if (isHeic) {
+                if (indicator) indicator.textContent = 'Converting HEIC image...';
+                file = await convertHeicToJpg(file);
+                if (!file) {
+                    alert('Failed to convert HEIC image. Please try a different format.');
+                    return;
+                }
+            }
+
+            if (indicator) indicator.textContent = 'Uploading...';
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/agent/upload/image', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${state.token}` },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.code === 0 && result.data.url) {
+                // 上传成功，发送图片消息
+                sendImageMessage(result.data.url);
+            }else {
+                alert(result.message || 'Upload failed');
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Upload failed, please try again');
+        }finally {
+            // 隐藏上传中状态
+            if (indicator) indicator.style.display = 'none';
+            // 清空文件选择
+            $('#imageInput').value = '';
+        }
+    }
+
+    // 将 HEIC/HEIF 转换为 JPG（使用 heic2any 库）
+    async function convertHeicToJpg(file) {
+        // 动态加载 heic2any 库
+        if (typeof heic2any === 'undefined') {
+            await loadScript('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js');
+        }
+
+        try {
+            const convertedBlob = await heic2any({
+                blob: file,
+                toType: 'image/jpeg',
+                quality: 0.9
+            });
+
+            // 创建新的 File 对象
+            const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+            return new File([convertedBlob], newFileName, { type: 'image/jpeg' });
+        }catch (error) {
+            console.error('HEIC conversion error:', error);
+            return null;
+        }
+    }
+
+    // 动态加载脚本
+    function loadScript(src) {
+        return new Promise((resolve, reject) => {
+            // 检查是否已加载
+            if (document.querySelector(`script[src="${src}"]`)) {
+                resolve();
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    // 发送图片消息
+    function sendImageMessage(imageUrl) {
+        if (!state.ws || state.ws.readyState !== WebSocket.OPEN || !state.currentConvId) return;
+
+        state.ws.send(JSON.stringify({
+            type: 'message',
+            data: {
+                conversation_id: state.currentConvId,
+                content: imageUrl,
+                content_type: 2
+            }
+        }));
     }
 
     window.closeConversation = async function(convId) {
@@ -947,7 +1162,7 @@
             const statusClass = `status-${conv.status}`;
             const agentName = conv.agent ? conv.agent.nickname : '未分配';
             const lastMsg = conv.last_message ? conv.last_message.content : '无消息';
-            const createdAt = conv.created_at ? conv.created_at.split(' ')[0] : '';
+            const createdAt = formatDate(conv.created_at);
 
             return `
                 <div class="history-conv-item" onclick="showHistoryMessages(${conv.id}, '${escapeHtml(createdAt)}')">
@@ -1026,7 +1241,7 @@
         }
 
         container.innerHTML = messages.map(msg => {
-            const time = msg.created_at ? msg.created_at.split(' ')[1] : '';
+            const time = formatMessageTime(msg.created_at);
 
             if (msg.sender_type === 3) {
                 // 系统消息
@@ -1244,9 +1459,26 @@
                 }
             });
             if (convId === state.currentConvId) {
-                renderChatArea();
+                // 只更新已读状态，不重新渲染整个区域
+                updateReadStatus();
             }
         }
+    }
+
+    // 只更新消息的已读状态显示
+    function updateReadStatus() {
+        const chatMessages = $('#chatMessages');
+        if (!chatMessages) return;
+
+        // 更新所有客服消息的已读标记（msg-right 是客服消息）
+        const statusElements = chatMessages.querySelectorAll('.msg-right .msg-status');
+        statusElements.forEach(el => {
+            if (!el.classList.contains('read')) {
+                el.classList.remove('sent', 'sending');
+                el.classList.add('read');
+                el.textContent = '✓✓';
+            }
+        });
     }
 
     function addMessage(msg) {
@@ -1257,7 +1489,8 @@
         if (!exists) {
             state.messages[convId].push(msg);
             if (convId === state.currentConvId) {
-                renderChatArea();
+                // 只追加新消息，不重新渲染整个区域
+                appendMessageToChat(msg);
                 // 当前会话收到消息，标记为已读
                 if (msg.sender_type === 1) {
                     markMessagesAsRead(convId);
@@ -1266,6 +1499,30 @@
 
             // 更新会话列表中的最后一条消息和未读数
             updateConversationInList(msg);
+        }
+    }
+
+    // 追加单条消息到聊天区域（不重新渲染整个区域）
+    function appendMessageToChat(msg) {
+        const chatMessages = $('#chatMessages');
+        if (!chatMessages) return;
+
+        // 创建消息 HTML 并追加
+        const msgHtml = renderMessageHTML(msg);
+        chatMessages.insertAdjacentHTML('beforeend', msgHtml);
+
+        // 滚动到底部
+        scrollToBottom();
+    }
+
+    // 滚动到聊天底部
+    function scrollToBottom() {
+        const chatMessages = $('#chatMessages');
+        if (chatMessages) {
+            // 使用 requestAnimationFrame 确保 DOM 更新后再滚动
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
         }
     }
 
@@ -1341,6 +1598,7 @@
         $('#mainContent').style.display = 'flex';
         $('#statsContainer').style.display = 'none';
         $('#agentMgmtContainer').style.display = 'none';
+        $('#quickMgmtContainer').style.display = 'none';
     }
 
     // 隐藏统计页面（兼容旧代码）
@@ -1623,6 +1881,204 @@
             if (data.code === 0) {
                 showToast('删除成功');
                 await loadAgentList();
+            } else {
+                showToast(data.message || '删除失败');
+            }
+        } catch (e) {
+            showToast('删除失败: ' + e.message);
+        }
+    }
+
+    // ==================== 快捷回复管理功能 ====================
+
+    // 显示快捷回复管理页面
+    async function showQuickReplyMgmtPage() {
+        state.currentView = 'quickMgmt';
+        $('#mainContent').style.display = 'none';
+        $('#statsContainer').style.display = 'none';
+        $('#agentMgmtContainer').style.display = 'none';
+        $('#quickMgmtContainer').style.display = 'block';
+
+        $('#quickMgmtContainer').innerHTML = `
+            <div class="quick-mgmt-header">
+                <h2>⚡ 快捷回复管理</h2>
+                <div>
+                    <button class="add-quick-btn" id="addQuickReplyBtn">+ 新增快捷回复</button>
+                    <button class="back-btn" id="backFromQuickMgmt">返回工作台</button>
+                </div>
+            </div>
+            <div class="quick-table-container">
+                <table class="quick-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px;">ID</th>
+                            <th style="width:150px;">标题</th>
+                            <th>内容</th>
+                            <th style="width:80px;">排序</th>
+                            <th style="width:80px;">状态</th>
+                            <th style="width:150px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quickTableBody">
+                        <tr><td colspan="6" style="text-align:center;padding:40px;">加载中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        $('#backFromQuickMgmt').onclick = backToWorkspace;
+        $('#addQuickReplyBtn').onclick = () => openQuickReplyEditModal(null);
+
+        await loadQuickReplyList();
+    }
+
+    // 加载快捷回复列表（管理用）
+    async function loadQuickReplyList() {
+        try {
+            const res = await fetch('/quick-reply/all', {
+                headers: { 'Authorization': `Bearer ${state.token}` }
+            });
+            const data = await res.json();
+            if (data.code === 0) {
+                renderQuickReplyTable(data.data.list || []);
+            } else {
+                showToast(data.message || '加载失败');
+            }
+        } catch (e) {
+            showToast('加载快捷回复失败');
+        }
+    }
+
+    // 渲染快捷回复表格
+    function renderQuickReplyTable(list) {
+        if (list.length === 0) {
+            $('#quickTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">暂无快捷回复，点击上方按钮添加</td></tr>';
+            return;
+        }
+
+        $('#quickTableBody').innerHTML = list.map(q => {
+            const statusClass = q.is_active === 1 ? 'active' : 'inactive';
+            const statusText = q.is_active === 1 ? '启用' : '禁用';
+            // 内容截断显示
+            const contentPreview = q.content.length > 50 ? q.content.substring(0, 50) + '...' : q.content;
+            return `
+                <tr>
+                    <td>${q.id}</td>
+                    <td>${escapeHtml(q.title)}</td>
+                    <td class="quick-content" title="${escapeHtml(q.content)}">${escapeHtml(contentPreview)}</td>
+                    <td>${q.sort_order}</td>
+                    <td><span class="quick-status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="action-btn edit" onclick="openQuickReplyEditModal(${q.id})">编辑</button>
+                        <button class="action-btn delete" onclick="confirmDeleteQuickReply(${q.id}, '${escapeHtml(q.title)}')">删除</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // 打开快捷回复编辑弹窗
+    window.openQuickReplyEditModal = async function(id) {
+        $('#editQuickReplyId').value = id || '';
+        $('#editQuickReplyTitle').value = '';
+        $('#editQuickReplyContent').value = '';
+        $('#editQuickReplySortOrder').value = '0';
+        $('#editQuickReplyStatus').value = '1';
+
+        if (id) {
+            // 编辑模式
+            $('#quickReplyEditTitle').textContent = '编辑快捷回复';
+            try {
+                const res = await fetch('/quick-reply/all', {
+                    headers: { 'Authorization': `Bearer ${state.token}` }
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    const item = data.data.list.find(q => q.id === id);
+                    if (item) {
+                        $('#editQuickReplyTitle').value = item.title || '';
+                        $('#editQuickReplyContent').value = item.content || '';
+                        $('#editQuickReplySortOrder').value = item.sort_order || 0;
+                        $('#editQuickReplyStatus').value = item.is_active || 0;
+                    }
+                }
+            } catch (e) {
+                showToast('获取快捷回复信息失败');
+            }
+        } else {
+            // 新增模式
+            $('#quickReplyEditTitle').textContent = '新增快捷回复';
+        }
+
+        $('#quickReplyEditModal').classList.add('show');
+    }
+
+    // 提交快捷回复编辑
+    window.submitQuickReplyEdit = async function() {
+        const id = $('#editQuickReplyId').value;
+        const isEdit = id !== '';
+        const title = $('#editQuickReplyTitle').value.trim();
+        const content = $('#editQuickReplyContent').value.trim();
+        const sortOrder = parseInt($('#editQuickReplySortOrder').value) || 0;
+        const isActive = parseInt($('#editQuickReplyStatus').value) || 0;
+
+        if (!title) {
+            showToast('标题不能为空');
+            return;
+        }
+        if (!content) {
+            showToast('内容不能为空');
+            return;
+        }
+
+        const body = { title, content, sort_order: sortOrder, is_active: isActive };
+
+        try {
+            const url = isEdit ? `/quick-reply/update/${id}` : '/quick-reply/create';
+            const method = isEdit ? 'PUT' : 'POST';
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${state.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.code === 0) {
+                showToast(isEdit ? '修改成功' : '添加成功');
+                closeModal('quickReplyEditModal');
+                await loadQuickReplyList();
+                // 同时刷新客服使用的快捷回复
+                await loadQuickReplies();
+            } else {
+                showToast(data.message || '操作失败');
+            }
+        } catch (e) {
+            showToast('操作失败: ' + e.message);
+        }
+    }
+
+    // 确认删除快捷回复
+    window.confirmDeleteQuickReply = function(id, title) {
+        if (confirm(`确定要删除快捷回复「${title}」吗？`)) {
+            deleteQuickReply(id);
+        }
+    }
+
+    // 删除快捷回复
+    async function deleteQuickReply(id) {
+        try {
+            const res = await fetch(`/quick-reply/delete/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${state.token}` }
+            });
+            const data = await res.json();
+            if (data.code === 0) {
+                showToast('删除成功');
+                await loadQuickReplyList();
+                // 同时刷新客服使用的快捷回复
+                await loadQuickReplies();
             } else {
                 showToast(data.message || '删除失败');
             }

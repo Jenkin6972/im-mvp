@@ -32,7 +32,7 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -48,7 +48,7 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Console\\' => 26,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Server\\' => 16,
@@ -60,16 +60,20 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
             'PhpOption\\' => 10,
             'PhpDocReader\\' => 13,
         ),
-        'M' => 
+        'O' =>
+        array (
+            'OSS\\' => 4,
+        ),
+        'M' =>
         array (
             'Monolog\\' => 8,
         ),
-        'L' => 
+        'L' =>
         array (
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\Mime\\' => 13,
         ),
-        'H' => 
+        'H' =>
         array (
             'Hyperf\\WebSocketServer\\' => 23,
             'Hyperf\\Validation\\' => 18,
@@ -113,21 +117,21 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
             'Hyperf\\CodeParser\\' => 18,
             'HyperfTest\\' => 11,
         ),
-        'G' => 
+        'G' =>
         array (
             'GrahamCampbell\\ResultType\\' => 26,
         ),
-        'F' => 
+        'F' =>
         array (
             'Firebase\\JWT\\' => 13,
             'Fig\\Http\\Message\\' => 17,
             'FastRoute\\' => 10,
         ),
-        'E' => 
+        'E' =>
         array (
             'Egulias\\EmailValidator\\' => 23,
         ),
-        'D' => 
+        'D' =>
         array (
             'Dotenv\\' => 7,
             'Doctrine\\Instantiator\\' => 22,
@@ -136,336 +140,340 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
             'Doctrine\\Common\\Lexer\\' => 22,
             'DeepCopy\\' => 9,
         ),
-        'C' => 
+        'C' =>
         array (
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
-        'A' => 
+        'A' =>
         array (
             'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Polyfill\\Php80\\' => 
+        'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'Symfony\\Polyfill\\Mbstring\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
         ),
-        'Symfony\\Polyfill\\Intl\\Idn\\' => 
+        'Symfony\\Polyfill\\Intl\\Idn\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
-        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
+        'Symfony\\Polyfill\\Intl\\Grapheme\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
         ),
-        'Symfony\\Polyfill\\Ctype\\' => 
+        'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Contracts\\Translation\\' => 
+        'Symfony\\Contracts\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/translation-contracts',
         ),
-        'Symfony\\Contracts\\Service\\' => 
+        'Symfony\\Contracts\\Service\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
         ),
-        'Symfony\\Component\\Translation\\' => 
+        'Symfony\\Component\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
         ),
-        'Symfony\\Component\\String\\' => 
+        'Symfony\\Component\\String\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/string',
         ),
-        'Symfony\\Component\\HttpFoundation\\' => 
+        'Symfony\\Component\\HttpFoundation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/http-foundation',
         ),
-        'Symfony\\Component\\Finder\\' => 
+        'Symfony\\Component\\Finder\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
         ),
-        'Symfony\\Component\\Console\\' => 
+        'Symfony\\Component\\Console\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
         ),
-        'Psr\\Http\\Server\\' => 
+        'Psr\\Http\\Server\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-server-middleware/src',
             1 => __DIR__ . '/..' . '/psr/http-server-handler/src',
         ),
-        'Psr\\Http\\Message\\' => 
+        'Psr\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\EventDispatcher\\' => 
+        'Psr\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
         ),
-        'Psr\\Container\\' => 
+        'Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Psr\\Clock\\' => 
+        'Psr\\Clock\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/clock/src',
         ),
-        'PhpParser\\' => 
+        'PhpParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
-        'PhpOption\\' => 
+        'PhpOption\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
         ),
-        'PhpDocReader\\' => 
+        'PhpDocReader\\' =>
         array (
             0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
         ),
-        'Monolog\\' => 
+        'OSS\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS',
+        ),
+        'Monolog\\' =>
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
-        'Laminas\\Stdlib\\' => 
+        'Laminas\\Stdlib\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-stdlib/src',
         ),
-        'Laminas\\Mime\\' => 
+        'Laminas\\Mime\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-mime/src',
         ),
-        'Hyperf\\WebSocketServer\\' => 
+        'Hyperf\\WebSocketServer\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/websocket-server/src',
         ),
-        'Hyperf\\Validation\\' => 
+        'Hyperf\\Validation\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/validation/src',
         ),
-        'Hyperf\\Utils\\' => 
+        'Hyperf\\Utils\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/utils/src',
         ),
-        'Hyperf\\Translation\\' => 
+        'Hyperf\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/translation/src',
         ),
-        'Hyperf\\Testing\\' => 
+        'Hyperf\\Testing\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/testing/src',
         ),
-        'Hyperf\\Tappable\\' => 
+        'Hyperf\\Tappable\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/tappable/src',
         ),
-        'Hyperf\\Support\\' => 
+        'Hyperf\\Support\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/support/src',
         ),
-        'Hyperf\\Stringable\\' => 
+        'Hyperf\\Stringable\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/stringable/src',
         ),
-        'Hyperf\\Server\\' => 
+        'Hyperf\\Server\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/server/src',
         ),
-        'Hyperf\\Serializer\\' => 
+        'Hyperf\\Serializer\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/serializer/src',
         ),
-        'Hyperf\\Redis\\' => 
+        'Hyperf\\Redis\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/redis/src',
         ),
-        'Hyperf\\Process\\' => 
+        'Hyperf\\Process\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/process/src',
         ),
-        'Hyperf\\Pool\\' => 
+        'Hyperf\\Pool\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/pool/src',
         ),
-        'Hyperf\\Pipeline\\' => 
+        'Hyperf\\Pipeline\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/pipeline/src',
         ),
-        'Hyperf\\ModelListener\\' => 
+        'Hyperf\\ModelListener\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/model-listener/src',
         ),
-        'Hyperf\\Macroable\\' => 
+        'Hyperf\\Macroable\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/macroable/src',
         ),
-        'Hyperf\\Logger\\' => 
+        'Hyperf\\Logger\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/logger/src',
         ),
-        'Hyperf\\HttpServer\\' => 
+        'Hyperf\\HttpServer\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/http-server/src',
         ),
-        'Hyperf\\HttpMessage\\' => 
+        'Hyperf\\HttpMessage\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/http-message/src',
         ),
-        'Hyperf\\Framework\\' => 
+        'Hyperf\\Framework\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/framework/src',
         ),
-        'Hyperf\\ExceptionHandler\\' => 
+        'Hyperf\\ExceptionHandler\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/exception-handler/src',
         ),
-        'Hyperf\\Event\\' => 
+        'Hyperf\\Event\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/event/src',
         ),
-        'Hyperf\\Engine\\Contract\\' => 
+        'Hyperf\\Engine\\Contract\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/engine-contract/src',
         ),
-        'Hyperf\\Engine\\' => 
+        'Hyperf\\Engine\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/engine/src',
         ),
-        'Hyperf\\Dispatcher\\' => 
+        'Hyperf\\Dispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/dispatcher/src',
         ),
-        'Hyperf\\Di\\' => 
+        'Hyperf\\Di\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/di/src',
         ),
-        'Hyperf\\Devtool\\' => 
+        'Hyperf\\Devtool\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/devtool/src',
         ),
-        'Hyperf\\DbConnection\\' => 
+        'Hyperf\\DbConnection\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/db-connection/src',
         ),
-        'Hyperf\\Database\\' => 
+        'Hyperf\\Database\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/database/src',
         ),
-        'Hyperf\\Crontab\\' => 
+        'Hyperf\\Crontab\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/crontab/src',
         ),
-        'Hyperf\\Coroutine\\' => 
+        'Hyperf\\Coroutine\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/coroutine/src',
         ),
-        'Hyperf\\Coordinator\\' => 
+        'Hyperf\\Coordinator\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/coordinator/src',
         ),
-        'Hyperf\\Contract\\' => 
+        'Hyperf\\Contract\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/contract/src',
         ),
-        'Hyperf\\Context\\' => 
+        'Hyperf\\Context\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/context/src',
         ),
-        'Hyperf\\Config\\' => 
+        'Hyperf\\Config\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/config/src',
         ),
-        'Hyperf\\Conditionable\\' => 
+        'Hyperf\\Conditionable\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/conditionable/src',
         ),
-        'Hyperf\\Command\\' => 
+        'Hyperf\\Command\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/command/src',
         ),
-        'Hyperf\\Collection\\' => 
+        'Hyperf\\Collection\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/collection/src',
         ),
-        'Hyperf\\Codec\\' => 
+        'Hyperf\\Codec\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/codec/src',
         ),
-        'Hyperf\\CodeParser\\' => 
+        'Hyperf\\CodeParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/hyperf/code-parser/src',
         ),
-        'HyperfTest\\' => 
+        'HyperfTest\\' =>
         array (
             0 => __DIR__ . '/../..' . '/test',
         ),
-        'GrahamCampbell\\ResultType\\' => 
+        'GrahamCampbell\\ResultType\\' =>
         array (
             0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
         ),
-        'Firebase\\JWT\\' => 
+        'Firebase\\JWT\\' =>
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
-        'Fig\\Http\\Message\\' => 
+        'Fig\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/fig/http-message-util/src',
         ),
-        'FastRoute\\' => 
+        'FastRoute\\' =>
         array (
             0 => __DIR__ . '/..' . '/nikic/fast-route/src',
         ),
-        'Egulias\\EmailValidator\\' => 
+        'Egulias\\EmailValidator\\' =>
         array (
             0 => __DIR__ . '/..' . '/egulias/email-validator/src',
         ),
-        'Dotenv\\' => 
+        'Dotenv\\' =>
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
-        'Doctrine\\Instantiator\\' => 
+        'Doctrine\\Instantiator\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
         ),
-        'Doctrine\\Inflector\\' => 
+        'Doctrine\\Inflector\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/src',
         ),
-        'Doctrine\\Deprecations\\' => 
+        'Doctrine\\Deprecations\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/deprecations/src',
         ),
-        'Doctrine\\Common\\Lexer\\' => 
+        'Doctrine\\Common\\Lexer\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/lexer/src',
         ),
-        'DeepCopy\\' => 
+        'DeepCopy\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'Carbon\\Doctrine\\' => 
+        'Carbon\\Doctrine\\' =>
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
         ),
-        'Carbon\\' => 
+        'Carbon\\' =>
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
-        'App\\' => 
+        'App\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
@@ -478,12 +486,17 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
         'App\\Controller\\Http\\ConversationController' => __DIR__ . '/../..' . '/app/Controller/Http/ConversationController.php',
         'App\\Controller\\Http\\CustomerController' => __DIR__ . '/../..' . '/app/Controller/Http/CustomerController.php',
         'App\\Controller\\Http\\MessageController' => __DIR__ . '/../..' . '/app/Controller/Http/MessageController.php',
+        'App\\Controller\\Http\\QuickReplyController' => __DIR__ . '/../..' . '/app/Controller/Http/QuickReplyController.php',
+        'App\\Controller\\Http\\StatisticsController' => __DIR__ . '/../..' . '/app/Controller/Http/StatisticsController.php',
+        'App\\Controller\\Http\\SystemConfigController' => __DIR__ . '/../..' . '/app/Controller/Http/SystemConfigController.php',
+        'App\\Controller\\Http\\UploadController' => __DIR__ . '/../..' . '/app/Controller/Http/UploadController.php',
         'App\\Controller\\WebSocketController' => __DIR__ . '/../..' . '/app/Controller/WebSocketController.php',
         'App\\Enums\\AgentStatus' => __DIR__ . '/../..' . '/app/Enums/AgentStatus.php',
         'App\\Enums\\ContentType' => __DIR__ . '/../..' . '/app/Enums/ContentType.php',
         'App\\Enums\\ConversationStatus' => __DIR__ . '/../..' . '/app/Enums/ConversationStatus.php',
         'App\\Enums\\SenderType' => __DIR__ . '/../..' . '/app/Enums/SenderType.php',
         'App\\Exception\\Handler\\AppExceptionHandler' => __DIR__ . '/../..' . '/app/Exception/Handler/AppExceptionHandler.php',
+        'App\\Listener\\BootstrapListener' => __DIR__ . '/../..' . '/app/Listener/BootstrapListener.php',
         'App\\Middleware\\AuthMiddleware' => __DIR__ . '/../..' . '/app/Middleware/AuthMiddleware.php',
         'App\\Model\\Agent' => __DIR__ . '/../..' . '/app/Model/Agent.php',
         'App\\Model\\Conversation' => __DIR__ . '/../..' . '/app/Model/Conversation.php',
@@ -491,13 +504,19 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
         'App\\Model\\Customer' => __DIR__ . '/../..' . '/app/Model/Customer.php',
         'App\\Model\\Message' => __DIR__ . '/../..' . '/app/Model/Message.php',
         'App\\Model\\Model' => __DIR__ . '/../..' . '/app/Model/Model.php',
+        'App\\Model\\QuickReply' => __DIR__ . '/../..' . '/app/Model/QuickReply.php',
+        'App\\Model\\SystemConfig' => __DIR__ . '/../..' . '/app/Model/SystemConfig.php',
         'App\\Service\\AgentService' => __DIR__ . '/../..' . '/app/Service/AgentService.php',
         'App\\Service\\AuthService' => __DIR__ . '/../..' . '/app/Service/AuthService.php',
         'App\\Service\\ConversationService' => __DIR__ . '/../..' . '/app/Service/ConversationService.php',
         'App\\Service\\CustomerService' => __DIR__ . '/../..' . '/app/Service/CustomerService.php',
         'App\\Service\\MessageService' => __DIR__ . '/../..' . '/app/Service/MessageService.php',
+        'App\\Service\\OssService' => __DIR__ . '/../..' . '/app/Service/OssService.php',
+        'App\\Service\\StatisticsService' => __DIR__ . '/../..' . '/app/Service/StatisticsService.php',
         'App\\Service\\WebSocketService' => __DIR__ . '/../..' . '/app/Service/WebSocketService.php',
+        'App\\Task\\AgentHeartbeatTask' => __DIR__ . '/../..' . '/app/Task/AgentHeartbeatTask.php',
         'App\\Task\\AutoTransferTask' => __DIR__ . '/../..' . '/app/Task/AutoTransferTask.php',
+        'App\\Task\\WaitingConversationTask' => __DIR__ . '/../..' . '/app/Task/WaitingConversationTask.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Carbon\\AbstractTranslator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/AbstractTranslator.php',
         'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',
@@ -1893,6 +1912,110 @@ class ComposerStaticInit99c0af5f7e8ee3a10a1c6f44485b01df
         'Monolog\\Test\\TestCase' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Test/TestCase.php',
         'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'OSS\\Core\\MimeTypes' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Core/MimeTypes.php',
+        'OSS\\Core\\OssException' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Core/OssException.php',
+        'OSS\\Core\\OssUtil' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Core/OssUtil.php',
+        'OSS\\Credentials\\Credentials' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Credentials/Credentials.php',
+        'OSS\\Credentials\\CredentialsProvider' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Credentials/CredentialsProvider.php',
+        'OSS\\Credentials\\EnvironmentVariableCredentialsProvider' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Credentials/EnvironmentVariableCredentialsProvider.php',
+        'OSS\\Credentials\\StaticCredentialsProvider' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Credentials/StaticCredentialsProvider.php',
+        'OSS\\Http\\RequestCore' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Http/RequestCore.php',
+        'OSS\\Http\\RequestCore_Exception' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Http/RequestCore_Exception.php',
+        'OSS\\Http\\ResponseCore' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Http/ResponseCore.php',
+        'OSS\\Model\\BucketInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/BucketInfo.php',
+        'OSS\\Model\\BucketListInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/BucketListInfo.php',
+        'OSS\\Model\\BucketStat' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/BucketStat.php',
+        'OSS\\Model\\CnameConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/CnameConfig.php',
+        'OSS\\Model\\CnameTokenInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/CnameTokenInfo.php',
+        'OSS\\Model\\CorsConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/CorsConfig.php',
+        'OSS\\Model\\CorsRule' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/CorsRule.php',
+        'OSS\\Model\\DeleteMarkerInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/DeleteMarkerInfo.php',
+        'OSS\\Model\\DeleteObjectInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/DeleteObjectInfo.php',
+        'OSS\\Model\\DeletedObjectInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/DeletedObjectInfo.php',
+        'OSS\\Model\\ExtendWormConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ExtendWormConfig.php',
+        'OSS\\Model\\GetLiveChannelHistory' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/GetLiveChannelHistory.php',
+        'OSS\\Model\\GetLiveChannelInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/GetLiveChannelInfo.php',
+        'OSS\\Model\\GetLiveChannelStatus' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/GetLiveChannelStatus.php',
+        'OSS\\Model\\InitiateWormConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/InitiateWormConfig.php',
+        'OSS\\Model\\LifecycleAction' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LifecycleAction.php',
+        'OSS\\Model\\LifecycleConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LifecycleConfig.php',
+        'OSS\\Model\\LifecycleRule' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LifecycleRule.php',
+        'OSS\\Model\\ListMultipartUploadInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ListMultipartUploadInfo.php',
+        'OSS\\Model\\ListPartsInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ListPartsInfo.php',
+        'OSS\\Model\\LiveChannelConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LiveChannelConfig.php',
+        'OSS\\Model\\LiveChannelHistory' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LiveChannelHistory.php',
+        'OSS\\Model\\LiveChannelInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LiveChannelInfo.php',
+        'OSS\\Model\\LiveChannelListInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LiveChannelListInfo.php',
+        'OSS\\Model\\LoggingConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/LoggingConfig.php',
+        'OSS\\Model\\ObjectInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ObjectInfo.php',
+        'OSS\\Model\\ObjectListInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ObjectListInfo.php',
+        'OSS\\Model\\ObjectListInfoV2' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ObjectListInfoV2.php',
+        'OSS\\Model\\ObjectVersionInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ObjectVersionInfo.php',
+        'OSS\\Model\\ObjectVersionListInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ObjectVersionListInfo.php',
+        'OSS\\Model\\Owner' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/Owner.php',
+        'OSS\\Model\\PartInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/PartInfo.php',
+        'OSS\\Model\\PrefixInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/PrefixInfo.php',
+        'OSS\\Model\\RefererConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/RefererConfig.php',
+        'OSS\\Model\\RequestPaymentConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/RequestPaymentConfig.php',
+        'OSS\\Model\\RestoreConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/RestoreConfig.php',
+        'OSS\\Model\\ServerSideEncryptionConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/ServerSideEncryptionConfig.php',
+        'OSS\\Model\\StorageCapacityConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/StorageCapacityConfig.php',
+        'OSS\\Model\\Tag' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/Tag.php',
+        'OSS\\Model\\TaggingConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/TaggingConfig.php',
+        'OSS\\Model\\TransferAccelerationConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/TransferAccelerationConfig.php',
+        'OSS\\Model\\UploadInfo' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/UploadInfo.php',
+        'OSS\\Model\\VersioningConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/VersioningConfig.php',
+        'OSS\\Model\\WebsiteConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/WebsiteConfig.php',
+        'OSS\\Model\\WormConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/WormConfig.php',
+        'OSS\\Model\\XmlConfig' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Model/XmlConfig.php',
+        'OSS\\OssClient' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/OssClient.php',
+        'OSS\\Result\\AclResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/AclResult.php',
+        'OSS\\Result\\AppendResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/AppendResult.php',
+        'OSS\\Result\\BodyResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/BodyResult.php',
+        'OSS\\Result\\CallbackResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/CallbackResult.php',
+        'OSS\\Result\\CopyObjectResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/CopyObjectResult.php',
+        'OSS\\Result\\CreateBucketCnameTokenResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/CreateBucketCnameTokenResult.php',
+        'OSS\\Result\\DeleteObjectVersionsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/DeleteObjectVersionsResult.php',
+        'OSS\\Result\\DeleteObjectsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/DeleteObjectsResult.php',
+        'OSS\\Result\\ExistResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ExistResult.php',
+        'OSS\\Result\\GetBucketCnameTokenResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketCnameTokenResult.php',
+        'OSS\\Result\\GetBucketEncryptionResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketEncryptionResult.php',
+        'OSS\\Result\\GetBucketInfoResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketInfoResult.php',
+        'OSS\\Result\\GetBucketRequestPaymentResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketRequestPaymentResult.php',
+        'OSS\\Result\\GetBucketStatResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketStatResult.php',
+        'OSS\\Result\\GetBucketTagsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketTagsResult.php',
+        'OSS\\Result\\GetBucketTransferAccelerationResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketTransferAccelerationResult.php',
+        'OSS\\Result\\GetBucketVersioningResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketVersioningResult.php',
+        'OSS\\Result\\GetBucketWormResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetBucketWormResult.php',
+        'OSS\\Result\\GetCnameResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetCnameResult.php',
+        'OSS\\Result\\GetCorsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetCorsResult.php',
+        'OSS\\Result\\GetLifecycleResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetLifecycleResult.php',
+        'OSS\\Result\\GetLiveChannelHistoryResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetLiveChannelHistoryResult.php',
+        'OSS\\Result\\GetLiveChannelInfoResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetLiveChannelInfoResult.php',
+        'OSS\\Result\\GetLiveChannelStatusResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetLiveChannelStatusResult.php',
+        'OSS\\Result\\GetLocationResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetLocationResult.php',
+        'OSS\\Result\\GetLoggingResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetLoggingResult.php',
+        'OSS\\Result\\GetRefererResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetRefererResult.php',
+        'OSS\\Result\\GetStorageCapacityResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetStorageCapacityResult.php',
+        'OSS\\Result\\GetWebsiteResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/GetWebsiteResult.php',
+        'OSS\\Result\\HeaderResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/HeaderResult.php',
+        'OSS\\Result\\InitiateBucketWormResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/InitiateBucketWormResult.php',
+        'OSS\\Result\\InitiateMultipartUploadResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/InitiateMultipartUploadResult.php',
+        'OSS\\Result\\ListBucketsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListBucketsResult.php',
+        'OSS\\Result\\ListLiveChannelResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListLiveChannelResult.php',
+        'OSS\\Result\\ListMultipartUploadResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListMultipartUploadResult.php',
+        'OSS\\Result\\ListObjectVersionsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListObjectVersionsResult.php',
+        'OSS\\Result\\ListObjectsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListObjectsResult.php',
+        'OSS\\Result\\ListObjectsV2Result' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListObjectsV2Result.php',
+        'OSS\\Result\\ListPartsResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/ListPartsResult.php',
+        'OSS\\Result\\PutLiveChannelResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/PutLiveChannelResult.php',
+        'OSS\\Result\\PutSetDeleteResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/PutSetDeleteResult.php',
+        'OSS\\Result\\Result' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/Result.php',
+        'OSS\\Result\\SymlinkResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/SymlinkResult.php',
+        'OSS\\Result\\UploadPartResult' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Result/UploadPartResult.php',
+        'OSS\\Signer\\SignerInterface' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Signer/SignerInterface.php',
+        'OSS\\Signer\\SignerV1' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Signer/SignerV1.php',
+        'OSS\\Signer\\SignerV4' => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS/Signer/SignerV4.php',
         'PHPUnit\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
         'PHPUnit\\Framework\\ActualValueIsNotAnObjectException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Exception/ActualValueIsNotAnObjectException.php',
         'PHPUnit\\Framework\\Assert' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert.php',

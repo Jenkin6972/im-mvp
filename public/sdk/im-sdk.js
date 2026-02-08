@@ -14,7 +14,9 @@
         position: 'right',       // 'right' | 'left'
         theme: '#1890ff',
         title: 'Customer Service',
-        zIndex: 2147483647
+        zIndex: 2147483647,
+        agentAvatar: '/avatar.jpg',   // 客服头像图片地址
+        agentName: 'Customer Service' // 客服名称
     };
 
     // 默认文案配置（fallback，当无法获取服务器配置时使用）
@@ -46,7 +48,8 @@
             messages: [],
             agentTyping: false,        // 客服正在输入
             typingTimer: null,         // 打字状态发送节流
-            agentTypingTimer: null     // 客服打字状态超时
+            agentTypingTimer: null,    // 客服打字状态超时
+            pendingWelcome: null       // 待入库的欢迎语
         },
         ws: null,
         elements: {},
@@ -280,9 +283,21 @@
                     justify-content: center;
                     font-size: 12px;
                     color: white;
+                    overflow: hidden;
+                }
+                .im-sdk-msg-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
                 }
                 .im-sdk-avatar-customer { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                .im-sdk-avatar-agent { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+                .im-sdk-avatar-agent { background: transparent; }
+                .im-sdk-agent-name {
+                    font-size: 12px;
+                    color: #666;
+                    margin-bottom: 4px;
+                    font-weight: 500;
+                }
                 .im-sdk-msg-bubble { max-width: 75%; }
                 .im-sdk-msg {
                     padding: 10px 14px;
@@ -349,6 +364,57 @@
                     font-size: 14px;
                 }
                 .im-sdk-send:hover { opacity: 0.9; }
+                .im-sdk-image-btn {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    padding: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .im-sdk-image-btn img {
+                    width: 20px;
+                    height: 20px;
+                    opacity: 0.6;
+                    transition: opacity 0.2s;
+                }
+                .im-sdk-image-btn:hover img { opacity: 1; }
+                .im-sdk-image-input { display: none; }
+                .im-sdk-msg-image {
+                    max-width: 200px;
+                    max-height: 200px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    display: block;
+                }
+                .im-sdk-msg-image:hover { opacity: 0.9; }
+                .im-sdk-image-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: none;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: ${this.config.zIndex + 1};
+                    cursor: zoom-out;
+                }
+                .im-sdk-image-modal.show { display: flex; }
+                .im-sdk-image-modal img {
+                    max-width: 90%;
+                    max-height: 90%;
+                    object-fit: contain;
+                }
+                .im-sdk-uploading {
+                    color: #999;
+                    font-size: 12px;
+                    padding: 8px 16px;
+                    display: none;
+                }
+                .im-sdk-uploading.show { display: block; }
             `;
         },
 
@@ -371,6 +437,10 @@
             this.elements.closeBtn = widget.querySelector('.im-sdk-close');
             this.elements.status = widget.querySelector('.im-sdk-status');
             this.elements.typing = widget.querySelector('.im-sdk-typing');
+            this.elements.imageBtn = widget.querySelector('.im-sdk-image-btn');
+            this.elements.imageInput = widget.querySelector('.im-sdk-image-input');
+            this.elements.imageModal = widget.querySelector('.im-sdk-image-modal');
+            this.elements.uploading = widget.querySelector('.im-sdk-uploading');
         },
 
         getBubbleHTML() {
@@ -392,10 +462,16 @@
                     </div>
                     <div class="im-sdk-messages"></div>
                     <div class="im-sdk-typing">${this.texts.agent_typing}</div>
+                    <div class="im-sdk-uploading">Uploading image...</div>
                     <div class="im-sdk-footer">
+                        <button class="im-sdk-image-btn" title="Send image"><img src="./upload.png" alt="Upload"></button>
+                        <input type="file" class="im-sdk-image-input" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,image/bmp,image/svg+xml,image/tiff,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.svg,.tiff,.tif,.ico">
                         <input type="text" class="im-sdk-input" placeholder="${this.texts.input_placeholder}">
-                        <button class="im-sdk-send">${this.texts.send_button}</button>
+                        <button class="im-sdk-send">➤</button>
                     </div>
+                </div>
+                <div class="im-sdk-image-modal">
+                    <img src="" alt="Preview">
                 </div>
             `;
         },
@@ -410,6 +486,11 @@
             // 打字状态
             this.elements.input.addEventListener('input', () => this.sendTypingStatus(true));
             this.elements.input.addEventListener('blur', () => this.sendTypingStatus(false));
+            // 图片上传
+            this.elements.imageBtn.addEventListener('click', () => this.elements.imageInput.click());
+            this.elements.imageInput.addEventListener('change', (e) => this.handleImageUpload(e));
+            // 图片放大关闭
+            this.elements.imageModal.addEventListener('click', () => this.closeImageModal());
         },
 
         toggle() {
@@ -440,45 +521,59 @@
 
         /**
          * 显示欢迎语
-         * 每次打开聊天窗口时显示系统欢迎消息
+         * 每次打开聊天窗口时显示欢迎消息（以客服身份）
          */
         showWelcomeMessage() {
             // 优先使用服务器配置的欢迎语，否则使用本地配置
             const welcomeText = this.texts.welcome_message || this.config.welcomeMessage;
             if (!welcomeText) return;
 
-            // 创建欢迎消息（不保存到本地存储，每次打开都显示）
+            // 创建欢迎消息（以客服身份显示，待入库）
+            const tempId = 'welcome_' + Date.now();
             const welcomeMsg = {
-                id: 'welcome_' + Date.now(),
+                id: tempId,
                 content: welcomeText,
-                sender_type: 3, // 系统消息
+                sender_type: 2, // 客服消息，显示客服头像
                 created_at: new Date().toISOString(),
-                isWelcome: true // 标记为欢迎消息
+                isWelcome: true,    // 标记为欢迎消息
+                isPending: true     // 标记为待入库
             };
 
-            // 直接渲染到消息区域（追加到末尾）
+            // 保存待入库的欢迎语
+            this.state.pendingWelcome = welcomeMsg;
+
+            // 渲染欢迎消息
             this.renderWelcomeMessage(welcomeMsg);
         },
 
         /**
-         * 渲染欢迎消息到消息区域
+         * 渲染欢迎消息到消息区域（以客服消息样式）
          */
         renderWelcomeMessage(msg) {
             const container = this.elements.messages;
             if (!container) return;
 
-            // 检查是否已经有欢迎消息（避免重复）
-            if (container.querySelector('.im-sdk-welcome-msg')) return;
+            // 检查是否已经有当前会话的欢迎消息（避免重复）
+            if (container.querySelector(`[data-msg-id="${msg.id}"]`)) return;
 
-            const div = document.createElement('div');
-            div.className = 'im-sdk-msg im-sdk-msg-system im-sdk-welcome-msg';
-            const span = document.createElement('span');
-            span.textContent = msg.content;
-            div.appendChild(span);
+            // 使用客服消息样式渲染（和 getMessageHTML 逻辑一致）
+            const time = this.formatTime(msg.created_at);
+            const agentAvatar = this.config.agentAvatar || '/avatar.jpg';
+            const agentName = this.config.agentName || 'Customer Service';
 
-            // 插入到消息列表末尾，用户每次打开都能看到
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+            const html = `
+                <div class="im-sdk-msg-wrapper im-sdk-msg-wrapper-left" data-msg-id="${msg.id}">
+                    <div class="im-sdk-msg-avatar im-sdk-avatar-agent"><img src="${agentAvatar}" alt="Agent"></div>
+                    <div class="im-sdk-msg-bubble">
+                        <div class="im-sdk-agent-name">${this.escapeHtml(agentName)}</div>
+                        <div class="im-sdk-msg im-sdk-msg-left">${this.escapeHtml(msg.content)}</div>
+                        <div class="im-sdk-msg-time">${time}</div>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', html);
+            this.scrollToBottom();
         },
 
         close() {
@@ -693,19 +788,243 @@
                         m.is_read = true;
                     }
                 });
-                this.renderMessages();
+                // 只更新已读标记，不重新渲染
+                this.updateReadStatus();
             }
         },
 
-        sendMessage() {
+        // 只更新消息的已读状态显示
+        updateReadStatus() {
+            const container = this.elements.messages;
+            if (!container) return;
+
+            const statusElements = container.querySelectorAll('.im-sdk-msg-wrapper-right .im-sdk-msg-status');
+            statusElements.forEach(el => {
+                if (!el.classList.contains('read')) {
+                    el.classList.add('read');
+                    el.textContent = '✓✓';
+                }
+            });
+        },
+
+        async sendMessage() {
             const content = this.elements.input.value.trim();
             if (!content || !this.state.isConnected) return;
 
+            // 先清空输入框，提升用户体验
+            this.elements.input.value = '';
+
+            // 如果有待入库的欢迎语，先保存
+            await this.savePendingWelcome();
+
+            // 发送消息
             this.ws.send(JSON.stringify({
                 type: 'message',
-                data: { content }
+                data: { content, content_type: 1 }
             }));
-            this.elements.input.value = '';
+        },
+
+        /**
+         * 保存待入库的欢迎语
+         */
+        async savePendingWelcome() {
+            if (!this.state.pendingWelcome) return;
+
+            const welcome = this.state.pendingWelcome;
+
+            try {
+                // const apiBase = this.config.server.replace(/^ws/, 'http').replace(/\/ws$/, '');
+                const apiBase = this.config.apiServer;
+                const res = await fetch(`${apiBase}/customer/save-welcome`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uuid: this.state.customerUuid,
+                        content: welcome.content,
+                        temp_id: welcome.id
+                    })
+                });
+
+                const data = await res.json();
+                if (data.code === 0) {
+                    // 更新欢迎语的真实ID
+                    welcome.id = data.data.message_id;
+                    welcome.isPending = false;
+                    welcome.created_at = data.data.created_at;
+
+                    // 更新 conversationId
+                    if (data.data.conversation_id) {
+                        this.state.conversationId = data.data.conversation_id;
+                    }
+
+                    // 将欢迎语加入消息列表（用于持久化）
+                    this.state.messages.push(welcome);
+                    this.saveMessages();
+                }
+            } catch (e) {
+                console.error('[IM-SDK] Failed to save welcome message:', e);
+            }
+
+            // 无论成功失败，都清除待入库标记
+            this.state.pendingWelcome = null;
+        },
+
+        // 处理图片上传
+        async handleImageUpload(e) {
+            let file = e.target.files[0];
+            if (!file) return;
+
+            // 验证文件类型（支持更多格式，包括 HEIC/HEIF）
+            const allowedTypes = [
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'image/webp',
+                'image/heic',
+                'image/heif',
+                'image/bmp',
+                'image/x-ms-bmp',
+                'image/svg+xml',
+                'image/tiff',
+                'image/x-icon',
+                'image/vnd.microsoft.icon'
+            ];
+
+            // 检查文件扩展名（作为 MIME 类型的补充）
+            const fileName = file.name.toLowerCase();
+            const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif', '.bmp', '.svg', '.tiff', '.tif', '.ico'];
+            const hasValidExt = allowedExts.some(ext => fileName.endsWith(ext));
+
+            if (!allowedTypes.includes(file.type) && !hasValidExt) {
+                alert('Only image files are supported (JPG, PNG, GIF, WEBP, HEIC, HEIF, BMP, SVG, TIFF, ICO)');
+                return;
+            }
+
+            // 验证文件大小（100MB）
+            if (file.size > 100 * 1024 * 1024) {
+                alert('Image size cannot exceed 100MB');
+                return;
+            }
+
+            // 显示上传中状态
+            this.elements.uploading.classList.add('show');
+            this.updateUploadingText('Uploading...');
+
+            try {
+                // 检查是否是 HEIC/HEIF 格式，需要转换
+                const isHeic = file.type === 'image/heic' || file.type === 'image/heif' ||
+                               fileName.endsWith('.heic') || fileName.endsWith('.heif');
+
+                if (isHeic) {
+                    this.updateUploadingText('Converting HEIC image...');
+                    file = await this.convertHeicToJpg(file);
+                    if (!file) {
+                        alert('Failed to convert HEIC image. Please try a different format.');
+                        return;
+                    }
+                }
+
+                this.updateUploadingText('Uploading...');
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const httpServer = this.getApiServer();
+                const response = await fetch(`${httpServer}/upload/image`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.code === 0 && result.data.url) {
+                    // 上传成功，发送图片消息
+                    this.sendImageMessage(result.data.url);
+                }else {
+                    alert(result.message || 'Upload failed');
+                }
+            }catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload failed, please try again');
+            } finally {
+                // 隐藏上传中状态
+                this.elements.uploading.classList.remove('show');
+                // 清空文件选择
+                this.elements.imageInput.value = '';
+            }
+        },
+
+        // 更新上传提示文字
+        updateUploadingText(text) {
+            if (this.elements.uploading) {
+                this.elements.uploading.textContent = text;
+            }
+        },
+
+        // 将 HEIC/HEIF 转换为 JPG（使用 heic2any 库）
+        async convertHeicToJpg(file) {
+            // 动态加载 heic2any 库
+            if (typeof heic2any === 'undefined') {
+                await this.loadScript('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js');
+            }
+
+            try {
+                const convertedBlob = await heic2any({
+                    blob: file,
+                    toType: 'image/jpeg',
+                    quality: 0.9
+                });
+
+                // 创建新的 File 对象
+                const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+                return new File([convertedBlob], newFileName, { type: 'image/jpeg' });
+            }catch (error) {
+                console.error('HEIC conversion error:', error);
+                return null;
+            }
+        },
+
+        // 动态加载脚本
+        loadScript(src) {
+            return new Promise((resolve, reject) => {
+                // 检查是否已加载
+                if (document.querySelector(`script[src="${src}"]`)) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        },
+
+        // 发送图片消息
+        async sendImageMessage(imageUrl) {
+            if (!this.state.isConnected) return;
+
+            // 如果有待入库的欢迎语，先保存
+            await this.savePendingWelcome();
+
+            this.ws.send(JSON.stringify({
+                type: 'message',
+                data: {
+                    content: imageUrl,
+                    content_type: 2
+                }
+            }));
+        },
+
+        // 关闭图片预览
+        closeImageModal() {
+            this.elements.imageModal.classList.remove('show');
+        },
+
+        // 打开图片预览
+        openImageModal(imageUrl) {
+            const img = this.elements.imageModal.querySelector('img');
+            img.src = imageUrl;
+            this.elements.imageModal.classList.add('show');
         },
 
         addMessage(msg) {
@@ -714,12 +1033,23 @@
 
             this.state.messages.push(msg);
             this.saveMessages();
-            this.renderMessages();
+
+            // 只追加新消息，不重新渲染整个列表
+            this.appendMessage(msg);
 
             if (!this.state.isOpen && msg.sender_type === 2) {
                 this.state.unreadCount++;
                 this.updateBadge();
             }
+        },
+
+        // 追加单条消息到列表末尾
+        appendMessage(msg) {
+            const container = this.elements.messages;
+            if (!container) return;
+
+            container.insertAdjacentHTML('beforeend', this.getMessageHTML(msg));
+            this.scrollToBottom();
         },
 
         addSystemMessage(text) {
@@ -731,19 +1061,29 @@
             });
         },
 
+        // 全量渲染（仅用于初始化、打开窗口等场景）
         renderMessages() {
             const container = this.elements.messages;
             container.innerHTML = this.state.messages.map(m => this.getMessageHTML(m)).join('');
-            container.scrollTop = container.scrollHeight;
+            this.scrollToBottom();
+        },
+
+        // 滚动到底部
+        scrollToBottom() {
+            const container = this.elements.messages;
+            if (!container) return;
+            requestAnimationFrame(() => {
+                container.scrollTop = container.scrollHeight;
+            });
         },
 
         getMessageHTML(msg) {
             const isCustomer = msg.sender_type === 1;
             const isSystem = msg.sender_type === 3;
-            const escapedContent = this.escapeHtml(msg.content);
+            const isImage = msg.content_type === 2;
 
             if (isSystem) {
-                return `<div class="im-sdk-msg-system">${escapedContent}</div>`;
+                return `<div class="im-sdk-msg-system">${this.escapeHtml(msg.content)}</div>`;
             }
 
             // 客户发送的消息显示已读状态
@@ -760,22 +1100,36 @@
             const wrapperCls = isCustomer ? 'im-sdk-msg-wrapper-right' : 'im-sdk-msg-wrapper-left';
             const msgCls = isCustomer ? 'im-sdk-msg-right' : 'im-sdk-msg-left';
             const avatarCls = isCustomer ? 'im-sdk-avatar-customer' : 'im-sdk-avatar-agent';
-            const avatarText = isCustomer ? 'My' : 'CS';
+
+            // 头像内容：客服用图片，客户用文字
+            const avatarContent = isCustomer
+                ? 'Me'
+                : `<img src="${this.config.agentAvatar || '/avatar.jpg'}" alt="Agent">`;
+
+            // 客服名称（仅客服消息显示）
+            const agentName = !isCustomer ? `<div class="im-sdk-agent-name">${this.escapeHtml(this.config.agentName || 'Customer Service')}</div>` : '';
 
             // 格式化时间
             let timeStr = '';
             if (msg.created_at) {
-                const timePart = msg.created_at.split(' ')[1];
-                if (timePart) {
-                    timeStr = timePart.substring(0, 5); // HH:MM
-                }
+                timeStr = this.formatTime(msg.created_at);
+            }
+
+            // 消息内容：图片或文本
+            let contentHTML = '';
+            if (isImage) {
+                const escapedUrl = this.escapeHtml(msg.content);
+                contentHTML = `<img src="${escapedUrl}" class="im-sdk-msg-image" onclick="ImSDK.openImageModal('${escapedUrl}')" alt="Image">`;
+            }else {
+                contentHTML = this.escapeHtml(msg.content);
             }
 
             return `
                 <div class="im-sdk-msg-wrapper ${wrapperCls}">
-                    <div class="im-sdk-msg-avatar ${avatarCls}">${avatarText}</div>
+                    <div class="im-sdk-msg-avatar ${avatarCls}">${avatarContent}</div>
                     <div class="im-sdk-msg-bubble">
-                        <div class="im-sdk-msg ${msgCls}">${escapedContent}${statusHTML}</div>
+                        ${agentName}
+                        <div class="im-sdk-msg ${msgCls}">${contentHTML}${statusHTML}</div>
                         <div class="im-sdk-msg-time">${timeStr}</div>
                     </div>
                 </div>`;
@@ -787,6 +1141,28 @@
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        },
+
+        // 格式化时间（支持多种格式）
+        formatTime(timeStr) {
+            if (!timeStr) return '';
+
+            try {
+                // 尝试解析时间
+                const date = new Date(timeStr);
+                if (isNaN(date.getTime())) {
+                    // 如果无法解析，尝试手动提取 HH:MM
+                    const match = timeStr.match(/(\d{2}):(\d{2})/);
+                    return match ? match[0] : '';
+                }
+
+                // 格式化为 HH:MM
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            } catch (e) {
+                return '';
+            }
         },
 
         updateStatus(text) {

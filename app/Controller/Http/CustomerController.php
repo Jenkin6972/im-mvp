@@ -418,5 +418,77 @@ class CustomerController
             default => '未知',
         };
     }
+
+    /**
+     * 保存欢迎语消息
+     *
+     * 【接口】POST /customer/save-welcome
+     *
+     * 【请求参数】
+     * - uuid：客户UUID（必填）
+     * - content：欢迎语内容（必填）
+     * - temp_id：前端临时ID（必填，用于前端更新）
+     *
+     * 【返回数据】
+     * - message_id：真实消息ID
+     * - temp_id：前端临时ID
+     * - created_at：创建时间
+     *
+     * 【说明】
+     * 客户发送第一条消息前，先调用此接口保存欢迎语。
+     * 欢迎语以客服身份保存（sender_type=2, sender_id=0 表示系统客服）。
+     *
+     * @param RequestInterface $request
+     * @return array
+     */
+    public function saveWelcome(RequestInterface $request): array
+    {
+        $uuid = $request->input('uuid', '');
+        $content = $request->input('content', '');
+        $tempId = $request->input('temp_id', '');
+
+        if (!$uuid || !$content || !$tempId) {
+            return json_error('参数不完整');
+        }
+
+        // 查找客户
+        $customer = Customer::where('uuid', $uuid)->first();
+        if (!$customer) {
+            return json_error('客户不存在');
+        }
+
+        // 获取或创建会话
+        $conversation = Conversation::query()
+            ->where('customer_id', $customer->id)
+            ->whereIn('status', [
+                ConversationStatus::WAITING,
+                ConversationStatus::ACTIVE,
+            ])
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (!$conversation) {
+            // 创建新会话（等待分配状态）
+            $conversation = Conversation::create([
+                'customer_id' => $customer->id,
+                'status' => ConversationStatus::WAITING,
+            ]);
+        }
+
+        // 创建欢迎语消息（以客服身份，sender_id=0 表示系统客服）
+        $message = $this->messageService->create(
+            $conversation->id,
+            SenderType::AGENT(),
+            0,  // sender_id=0 表示系统客服
+            $content
+        );
+
+        return json_success([
+            'message_id' => $message->id,
+            'temp_id' => $tempId,
+            'conversation_id' => $conversation->id,
+            'created_at' => $message->created_at->toIso8601String(),
+        ]);
+    }
 }
 
