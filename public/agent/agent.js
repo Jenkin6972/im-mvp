@@ -676,7 +676,7 @@
                         ${state.quickReplies.length === 0 ? '<div class="quick-reply-empty">暂无快捷回复</div>' : ''}
                     </div>
                 </div>
-                <button class="image-btn" id="imageBtn" title="发送图片"><img src="/upload.png" alt="上传图片"></button>
+                <button class="image-btn" id="imageBtn" title="发送图片"><img src="https://customservice95.oss-us-east-1.aliyuncs.com/im-mvp/dev/images/20260209_61f6e30bdda1c07c24a4d58796ea0977.png" alt="上传图片"></button>
                 <input type="file" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,image/bmp,image/svg+xml,image/tiff,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.svg,.tiff,.tif,.ico" style="display:none;">
                 <textarea class="chat-input" id="chatInput" placeholder="输入消息..." rows="1"></textarea>
                 <button class="send-btn" id="sendBtn">发送</button>

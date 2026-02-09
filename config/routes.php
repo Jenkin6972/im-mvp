@@ -88,22 +88,6 @@ Router::get('/dingding.mp3', function (): ResponseInterface {
         ->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(file_get_contents($file)));
 });
 
-// 图片上传按钮
-Router::get('/upload.png', function (): ResponseInterface {
-    $file = BASE_PATH . '/public/upload.png';
-    $response = \Hyperf\Context\Context::get(ResponseInterface::class);
-    return $response->withHeader('Content-Type', 'image/png')
-        ->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(file_get_contents($file)));
-});
-
-// 客服头像
-Router::get('/avatar.jpg', function (): ResponseInterface {
-    $file = BASE_PATH . '/public/avatar.jpg';
-    $response = \Hyperf\Context\Context::get(ResponseInterface::class);
-    return $response->withHeader('Content-Type', 'image/jpeg')
-        ->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(file_get_contents($file)));
-});
-
 // ==================== 认证路由（无需Token） ====================
 
 Router::post('/auth/login', [App\Controller\Http\AuthController::class, 'login']);

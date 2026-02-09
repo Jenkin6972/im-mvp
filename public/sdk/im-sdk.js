@@ -15,7 +15,7 @@
         theme: '#1890ff',
         title: 'Customer Service',
         zIndex: 2147483647,
-        agentAvatar: '/avatar.jpg',   // 客服头像图片地址
+        agentAvatar: 'https://customservice95.oss-us-east-1.aliyuncs.com/im-mvp/dev/images/20260209_c94dcbf17a8a6a5f7f3adcbc4de5ed3c.jpg',   // 客服头像图片地址
         agentName: 'Customer Service' // 客服名称
     };
 
@@ -464,7 +464,7 @@
                     <div class="im-sdk-typing">${this.texts.agent_typing}</div>
                     <div class="im-sdk-uploading">Uploading image...</div>
                     <div class="im-sdk-footer">
-                        <button class="im-sdk-image-btn" title="Send image"><img src="./upload.png" alt="Upload"></button>
+                        <button class="im-sdk-image-btn" title="Send image"><img src="https://customservice95.oss-us-east-1.aliyuncs.com/im-mvp/dev/images/20260209_61f6e30bdda1c07c24a4d58796ea0977.png" alt="Upload"></button>
                         <input type="file" class="im-sdk-image-input" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,image/bmp,image/svg+xml,image/tiff,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.svg,.tiff,.tif,.ico">
                         <input type="text" class="im-sdk-input" placeholder="${this.texts.input_placeholder}">
                         <button class="im-sdk-send">➤</button>
